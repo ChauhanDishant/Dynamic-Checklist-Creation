@@ -1,0 +1,14 @@
+yarn run v1.22.19
+$ tsc && vite build
+src/components/molecules/HeaderConfigurator.tsx(2,10): error TS6133: 'Plus' is declared but its value is never read.
+src/components/molecules/HeaderConfigurator.tsx(2,16): error TS6133: 'X' is declared but its value is never read.
+src/components/molecules/HeaderConfigurator.tsx(4,10): error TS6133: 'generateDefaultColumns' is declared but its value is never read.
+src/components/molecules/HeaderConfigurator.tsx(53,5): error TS2322: Type '{ id?: string | undefined; label?: string | undefined; width?: number | undefined; style?: CellStyle | undefined; }' is not assignable to type 'Column'.
+  Types of property 'id' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/components/organisms/ChecklistTable.tsx(3,10): error TS6133: 'arrayMove' is declared but its value is never read.
+src/components/organisms/ChecklistTable.tsx(5,24): error TS6133: 'Edit' is declared but its value is never read.
+src/store/checklistStore.ts(18,26): error TS6133: 'columnId' is declared but its value is never read.
+error Command failed with exit code 2.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
