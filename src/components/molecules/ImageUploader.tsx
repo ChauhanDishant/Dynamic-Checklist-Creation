@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
@@ -52,6 +52,31 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     },
     [onChange]
   )
+
+  // Handle paste events
+  useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items
+      if (!items) return
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        if (!item) continue
+        if (item.type.indexOf('image') !== -1) {
+          const file = item?.getAsFile()
+          if (file) {
+            e.preventDefault() // Prevent default paste behavior
+            // Reuse the onDrop logic for processing
+            onDrop([file])
+          }
+          break
+        }
+      }
+    }
+
+    window.addEventListener('paste', handlePaste)
+    return () => window.removeEventListener('paste', handlePaste)
+  }, [onDrop])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -130,6 +155,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       or click to browse (JPG, PNG, WebP - max 5MB)
+                    </p>
+                    <p className="text-xs text-primary mt-1 font-medium">
+                        Tip: You can also paste (Ctrl+V) an image!
                     </p>
                   </div>
                 </>

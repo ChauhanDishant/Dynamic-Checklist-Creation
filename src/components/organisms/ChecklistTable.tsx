@@ -165,7 +165,7 @@ const ChecklistTable: React.FC = () => {
     <>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead className="bg-muted sticky top-0 z-10">
+          <thead className="bg-background sticky top-0 z-10">
             <tr>
               <th className="w-20 p-2 border border-border">
                 <Checkbox
