@@ -78,23 +78,23 @@ const ChecklistFormPanel: React.FC = () => {
           placeholder="Enter checklist title"
         />
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <Button
-            variant="outline"
+            variant={showHeaderConfig ? "primary" : "outline"}
             size="sm"
             onClick={() => setShowHeaderConfig(!showHeaderConfig)}
-            className="flex-1"
+            className="w-full col-span-2"
           >
             <Settings2 className="h-4 w-4 mr-2" />
-            Configure Headers
+            {showHeaderConfig ? 'Close Configuration' : 'Configure Table Headers'}
           </Button>
           <Button variant="outline" size="sm" onClick={handleExportExcel}>
             <Download className="h-4 w-4 mr-2" />
-            Excel
+            Export Excel
           </Button>
           <Button variant="outline" size="sm" onClick={handleExportJSON}>
             <Download className="h-4 w-4 mr-2" />
-            JSON
+            Export JSON
           </Button>
         </div>
 
@@ -120,17 +120,20 @@ const ChecklistFormPanel: React.FC = () => {
           </Button>
         </div>
 
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            min="1"
-            max="100"
-            value={bulkRowCount}
-            onChange={(e) => setBulkRowCount(parseInt(e.target.value) || 1)}
-            placeholder="Count"
-            className="w-24"
-          />
-          <Button onClick={handleBulkAdd} variant="outline" size="sm" className="flex-1">
+        <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2 border border-input rounded-md px-3 py-1 bg-background w-32">
+            <span className="text-sm font-medium whitespace-nowrap">Bulk Add:</span>
+            <input
+                type="number"
+                min="1"
+                max="100"
+                value={bulkRowCount}
+                onChange={(e) => setBulkRowCount(parseInt(e.target.value) || 1)}
+                className="w-full bg-transparent border-none focus:outline-none h-8 text-sm"
+                placeholder="#"
+            />
+          </div>
+          <Button onClick={handleBulkAdd} variant="secondary" size="sm" className="flex-1">
             Add {bulkRowCount} Rows
           </Button>
         </div>

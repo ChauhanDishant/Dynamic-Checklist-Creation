@@ -17,7 +17,7 @@ export const exportToExcel = async (checklist: Checklist): Promise<void> => {
   worksheet.columns = checklist.columns.map((col) => ({
     header: col.label,
     key: col.id,
-    width: col.width ? col.width / 5 : 20, // Approximate conversion from px/percent to char width
+    width: col.width ? Math.max(col.width, 20) : 30, // Use column width directly or default to 30
     style: {
       font: {
         name: 'Arial',
@@ -69,8 +69,8 @@ export const exportToExcel = async (checklist: Checklist): Promise<void> => {
       const cell = row.cells[col.id]
       if (!cell) return
 
-      if (cell.subFields.length > 0) maxLineCount = Math.max(maxLineCount, cell.subFields.length + 1)
-      if (cell.image) maxLineCount = Math.max(maxLineCount, 5) // Minimum height for images
+      if (cell.subFields.length > 0) maxLineCount = Math.max(maxLineCount, cell.subFields.length + 2)
+      if (cell.image) maxLineCount = Math.max(maxLineCount, 12) // ~240px height for images
     })
     excelRow.height = maxLineCount * 20
 
@@ -91,6 +91,14 @@ export const exportToExcel = async (checklist: Checklist): Promise<void> => {
         }
       }
 
+      // Borders
+      excelCell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      }
+
       // Alignment
       excelCell.alignment = { wrapText: true, vertical: 'top', horizontal: 'left' }
 
@@ -104,7 +112,7 @@ export const exportToExcel = async (checklist: Checklist): Promise<void> => {
 
         worksheet.addImage(imageId, {
           tl: { col: checklist.columns.indexOf(col), row: excelRow.number - 1 },
-          ext: { width: 100, height: 100 },
+          ext: { width: 200, height: 200 },
           editAs: 'oneCell'
         })
       }

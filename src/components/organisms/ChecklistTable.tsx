@@ -6,11 +6,11 @@ import { GripVertical, Copy, Trash2 } from 'lucide-react'
 import { Button, Checkbox } from '@/components/atoms'
 import { CellEditor } from '@/components/molecules'
 import { useChecklist } from '@/hooks'
-import type { Row, Cell } from '@/types/checklist.types'
+import type { Row, Cell, Column } from '@/types/checklist.types'
 
 interface SortableRowProps {
   row: Row
-  columns: { id: string; label: string }[]
+  columns: Column[]
   isSelected: boolean
   onSelect: (checked: boolean) => void
   onEditCell: (rowId: string, columnId: string) => void
@@ -51,16 +51,36 @@ const SortableRow: React.FC<SortableRowProps> = ({
         return (
           <td
             key={column.id}
-            className="cursor-pointer hover:bg-primary/5 transition-colors"
+            className="cursor-pointer hover:bg-primary/5 transition-colors border border-border p-2 relative"
+            style={{ 
+              width: `${column.width}%`,
+              color: cell?.style?.fontColor,
+              fontSize: cell?.style?.fontSize,
+              fontWeight: cell?.style?.bold ? 'bold' : 'normal',
+              backgroundColor: cell?.style?.backgroundColor,
+            }}
             onClick={() => onEditCell(row.id, column.id)}
           >
             {cell?.value && <div className="truncate">{cell.value}</div>}
             {cell?.subFields && cell.subFields.length > 0 && (
-              <div className="text-xs text-muted-foreground">
-                +{cell.subFields.length} sub-field{cell.subFields.length > 1 ? 's' : ''}
+              <div className="text-xs text-muted-foreground mt-1">
+                {cell.subFields.map((sf, i) => (
+                  <div key={i} className="flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-muted-foreground" />
+                    <span className="truncate max-w-full">{sf}</span>
+                  </div>
+                ))}
               </div>
             )}
-            {cell?.image && <div className="text-xs text-muted-foreground">📷 Image</div>}
+            {cell?.image && (
+                <div className="mt-2">
+                    <img 
+                        src={cell.image} 
+                        alt="Cell content" 
+                        className="max-w-[150px] max-h-[150px] rounded-md border border-border object-cover"
+                    />
+                </div>
+            )}
           </td>
         )
       })}
@@ -155,7 +175,16 @@ const ChecklistTable: React.FC = () => {
               </th>
               <th className="w-12 p-2 border border-border">#</th>
               {checklist.columns.map((column) => (
-                <th key={column.id} className="p-2 border border-border text-left">
+                <th 
+                    key={column.id} 
+                    className="p-2 border border-border text-left"
+                    style={{ 
+                        width: `${column.width}%`,
+                        color: column.style.fontColor,
+                        fontSize: column.style.fontSize,
+                        fontWeight: column.style.bold ? 'bold' : 'normal',
+                    }}
+                >
                   {column.label}
                 </th>
               ))}
