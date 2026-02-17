@@ -25,10 +25,10 @@ const HeaderConfigurator: React.FC<HeaderConfiguratorProps> = ({
 
   const handleColumnCountChange = (count: number) => {
     setColumnCount(count)
+    let newColumns = [...localColumns]
     
     if (count > localColumns.length) {
       // Add new columns
-      const newColumns = [...localColumns]
       for (let i = localColumns.length; i < count; i++) {
         newColumns.push({
           id: generateId(),
@@ -41,28 +41,29 @@ const HeaderConfigurator: React.FC<HeaderConfiguratorProps> = ({
           },
         })
       }
-      setLocalColumns(newColumns)
     } else {
       // Remove columns
-      setLocalColumns(localColumns.slice(0, count))
+      newColumns = localColumns.slice(0, count)
     }
+    
+    setLocalColumns(newColumns)
+    onColumnsChange(newColumns)
+    
+    // Validate but don't block
+    const validation = validateColumns(newColumns)
+    setErrors(validation.valid ? [] : validation.errors)
   }
 
   const updateColumn = (index: number, updates: Partial<Column>) => {
     const updated = [...localColumns]
-    updated[index] = { ...updated[index], ...updates } as Column as Column
+    updated[index] = { ...updated[index], ...updates } as Column
     setLocalColumns(updated)
-  }
-
-  const applyChanges = () => {
-    const validation = validateColumns(localColumns)
-    if (!validation.valid) {
-      setErrors(validation.errors)
-      return
-    }
     
-    setErrors([])
-    onColumnsChange(localColumns)
+    onColumnsChange(updated)
+    
+    // Validate
+    const validation = validateColumns(updated)
+    setErrors(validation.valid ? [] : validation.errors)
   }
 
   const balanceWidths = () => {
@@ -72,6 +73,7 @@ const HeaderConfigurator: React.FC<HeaderConfiguratorProps> = ({
       width: equalWidth,
     }))
     setLocalColumns(updated)
+    onColumnsChange(updated)
   }
 
   return (
@@ -87,8 +89,8 @@ const HeaderConfigurator: React.FC<HeaderConfiguratorProps> = ({
           }))}
           className="w-48"
         />
-        <Button variant="outline" size="sm" onClick={balanceWidths} className="mt-6">
-          <Settings className="h-4 w-4 mr-2" />
+        <Button variant="outline" size="sm" onClick={balanceWidths} className="mt-6 h-10">
+          <Settings className="h-6 w-6 mr-2" />
           Balance Widths
         </Button>
       </div>
@@ -188,9 +190,6 @@ const HeaderConfigurator: React.FC<HeaderConfiguratorProps> = ({
         ))}
       </div>
 
-      <Button onClick={applyChanges} className="w-full">
-        Apply Column Configuration
-      </Button>
     </div>
   )
 }
