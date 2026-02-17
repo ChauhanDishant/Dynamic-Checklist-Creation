@@ -61,7 +61,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
-        if (item?.type.indexOf('image') !== -1) {
+        if (!item) continue
+        if (item.type.indexOf('image') !== -1) {
           const file = item?.getAsFile()
           if (file) {
             e.preventDefault() // Prevent default paste behavior
